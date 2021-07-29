@@ -1,25 +1,37 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom"
+
+
 import './App.css';
+import Container from "./components/Container";
+import FullCard from "./components/FullCard";
 
 function App() {
+  const [parks, setParks] = useState([])
+
+  useEffect(() => {
+      fetch('http://localhost:9393/national_parks/')
+      .then(res => res.json())
+      .then(data => {
+          console.log(data)
+          setParks(data.national_parks)})
+  }, []);
+
+  function addPark(newPark) {
+      setParks((mostUpdatedParks) => [...mostUpdatedParks, newPark])
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Router>
+      <Route exact path="/">
+        <Container parks={parks} addPark={addPark}/>
+      </Route>
+      <Route path="/parks/:name">
+        <FullCard parks={parks}/>
+      </Route>
+    </Router>
+  )
+  
 }
 
 export default App;
